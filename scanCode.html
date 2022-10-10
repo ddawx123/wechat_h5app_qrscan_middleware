@@ -26,7 +26,7 @@
         }
     </script>
     <script type="text/javascript">
-        let debugMode = true; // 仅调试环境使用，生产环境请务必调整为false
+        let debugMode = false; // 仅调试环境使用，生产环境请务必调整为false
         let prepData = {
             requestUrl: window.location.href,
             nonceStr: btoa(Math.random()),
@@ -105,7 +105,17 @@
                 needResult: 1,
                 scanType: ['qrCode', 'barCode'],
                 success: function (res) {
-                    alert(res.resultStr);
+                    // 根据扫码类型转入对应地区服务
+                    if (res.resultStr.indexOf('https://sxbuszp.com/station/') >= 0) { // 命中绍兴公交
+                        let stationId = res.resultStr.split('https://sxbuszp.com/station/')[1];
+                        top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=330600&stationId=' + stationId);
+                    } else if (res.resultStr.indexOf('https://appactive.ibuscloud.com/') >= 0) { // 命中杭州公交
+                        let stationInfo = res.resultStr.split('cn=')[1].split('&c=');
+                        top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[0] + '&stationId=' + stationInfo[1]);
+                    } else {
+                        console.log(res.resultStr);
+                        alert('中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。');
+                    }
                 }
             })
         };
