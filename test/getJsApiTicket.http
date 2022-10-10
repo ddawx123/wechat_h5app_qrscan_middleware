@@ -1,0 +1,11 @@
+POST https://api.dscitech.com/api/wxJsSignature
+Content-Type: application/json
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1 MicroMessenger
+
+{
+  "requestUrl":"http://qr.dingplace.com/scanCode.html",
+  "nonceStr":"MC44OTk5Mzg4NDIxMTMzNzU0",
+  "timeStamp":1665389025701
+}
+
+###

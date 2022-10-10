@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style="text-align: center">
+    <!--<wx-open-launch-weapp id="launch-btn" username="gh_xxxxxxxx" path="pages/home/index?user=123&action=abc">
+        <script type="text/wxtag-template">
+            <style>.btn { padding: 12px }</style>
+            <button class="btn">打开小程序</button>
+        </script>
+    </wx-open-launch-weapp>-->
+    <button class="btn" type="button">扫码</button>
+    <script src="js/xhr.js" type="text/javascript"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        // 用于微信内置浏览器内自动屏蔽右上角所有扩展选项，防止用户通过微信直接转跳至系统浏览器查看平台网址
+        if (typeof(WeixinJSBridge) !== 'undefined') {
+            setTimeout(function() {
+                document.addEventListener("WeixinJSBridgeReady", function() {
+                    WeixinJSBridge.call("hideOptionMenu");
+                }, false);
+                WeixinJSBridge.call("hideOptionMenu");
+            }, 300);
+        }
+    </script>
+    <script type="text/javascript">
+        let debugMode = true; // 仅调试环境使用，生产环境请务必调整为false
+        let prepData = {
+            requestUrl: window.location.href,
+            nonceStr: btoa(Math.random()),
+            timeStamp: new Date().getTime()
+        };
+        xhr.request({
+            url: 'https://api.dscitech.com/api/wxJsSignature',
+            method: 'POST',
+            data: prepData,
+            headers: [{
+                key: 'Content-Type',
+                val: 'application/json'
+            }, {
+                key: 'Cache-Control',
+                val: 'no-cache'
+            }],
+            beforeSend: function () {
+                console.log('Loading data by network request.');
+            },
+            afterResponse: function (res) {
+                if (res.code !== 200) {
+                    alert('微信JSAPI后端异常 ' + res.msg + ' ' + res.data.errmsg + ' ' + res.data.errcode);
+                } else {
+                    // 开始注入微信JSAPI特性配置
+                    wx.config({
+                        debug: debugMode,
+                        appId: 'wx9d02b81c997dc938',
+                        timestamp: prepData.timeStamp,
+                        nonceStr: prepData.nonceStr,
+                        signature: res.data.js_sign,
+                        jsApiList: [
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ],
+                        openTagList: ['wx-open-launch-weapp']
+                    });
+                }
+            }
+        });
+        document.querySelector('.btn').onclick = function () {
+            wx.scanQRCode({
+                needResult: 1,
+                scanType: ['qrCode', 'barCode'],
+                success: function (res) {
+                    alert(res.resultStr);
+                }
+            })
+        };
+    </script>
+</body>
+</html>
