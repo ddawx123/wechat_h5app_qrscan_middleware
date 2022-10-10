@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>扫码服务中间件</title>
 </head>
 <body style="text-align: center">
     <!--<wx-open-launch-weapp id="launch-btn" username="gh_xxxxxxxx" path="pages/home/index?user=123&action=abc">
@@ -11,7 +11,7 @@
             <button class="btn">打开小程序</button>
         </script>
     </wx-open-launch-weapp>-->
-    <button class="btn" type="button">扫码</button>
+    <h3>点击页面任意位置启动扫码</h3>
     <script src="js/xhr.js" type="text/javascript"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -100,7 +100,7 @@
                 }
             }
         });
-        document.querySelector('.btn').onclick = function () {
+        document.querySelector('body').onclick = function () {
             wx.scanQRCode({
                 needResult: 1,
                 scanType: ['qrCode', 'barCode'],
@@ -121,23 +121,25 @@
         };
         document.onreadystatechange = function () {
             if (document.readyState === 'complete') {
-                wx.scanQRCode({
-                    needResult: 1,
-                    scanType: ['qrCode', 'barCode'],
-                    success: function (res) {
-                        // 根据扫码类型转入对应地区服务
-                        if (res.resultStr.indexOf('https://sxbuszp.com/station/') >= 0) { // 命中绍兴公交
-                            let stationId = res.resultStr.split('https://sxbuszp.com/station/')[1];
-                            top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=330600&stationId=' + stationId);
-                        } else if (res.resultStr.indexOf('https://appactive.ibuscloud.com/') >= 0) { // 命中杭州公交
-                            let stationInfo = res.resultStr.split('cn=')[1].split('&c=');
-                            top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[0] + '&stationId=' + stationInfo[1]);
-                        } else {
-                            console.log(res.resultStr);
-                            alert('中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。');
+                window.setTimeout(function () {
+                    wx.scanQRCode({
+                        needResult: 1,
+                        scanType: ['qrCode', 'barCode'],
+                        success: function (res) {
+                            // 根据扫码类型转入对应地区服务
+                            if (res.resultStr.indexOf('https://sxbuszp.com/station/') >= 0) { // 命中绍兴公交
+                                let stationId = res.resultStr.split('https://sxbuszp.com/station/')[1];
+                                top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=330600&stationId=' + stationId);
+                            } else if (res.resultStr.indexOf('https://appactive.ibuscloud.com/') >= 0) { // 命中杭州公交
+                                let stationInfo = res.resultStr.split('cn=')[1].split('&c=');
+                                top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[0] + '&stationId=' + stationInfo[1]);
+                            } else {
+                                console.log(res.resultStr);
+                                alert('中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。');
+                            }
                         }
-                    }
-                });
+                    });
+                }, 1000);
             }
         }
     </script>
