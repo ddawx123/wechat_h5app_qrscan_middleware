@@ -111,7 +111,7 @@
                         top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=330600&stationId=' + stationId);
                     } else if (res.resultStr.indexOf('https://appactive.ibuscloud.com/') >= 0) { // 命中杭州公交
                         let stationInfo = res.resultStr.split('cn=')[1].split('&c=');
-                        top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[0] + '&stationId=' + stationInfo[1]);
+                        top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[1] + '&stationId=' + stationInfo[0]);
                     } else {
                         console.log(res.resultStr);
                         alert('中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。');
