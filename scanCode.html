@@ -19,8 +19,10 @@
             setTimeout(function() {
                 document.addEventListener("WeixinJSBridgeReady", function() {
                     WeixinJSBridge.call("hideOptionMenu");
+                    WeixinJSBridge.call("hideAllNonBaseMenuItem");
                 }, false);
                 WeixinJSBridge.call("hideOptionMenu");
+                WeixinJSBridge.call("hideAllNonBaseMenuItem");
             }, 300);
         }
     </script>
@@ -63,6 +65,8 @@
             }
         });
         wx.ready(function () {
+            wx.hideOptionMenu();
+            wx.hideAllNonBaseMenuItem();
             wx.scanQRCode({
                 needResult: 1,
                 scanType: ['qrCode', 'barCode'],
