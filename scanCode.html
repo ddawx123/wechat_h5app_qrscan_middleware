@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>扫码服务中间件</title>
+    <link href="css/sweetalert.min.css" rel="stylesheet" />
 </head>
 <body style="text-align: center">
-    <wx-open-launch-weapp id="launch-btn" username="gh_a1d36102e58d" path="pages/index/index?from=h5webapp">
-        <script type="text/wxtag-template">
-            <style>.btn { padding: 12px }</style>
-            <button class="btn">访问小程序</button>
-        </script>
-    </wx-open-launch-weapp>
+    <h2>请等待微信唤起扫码</h2>
+    <script src="js/sweetalert.min.js" type="text/javascript"></script>
     <script src="js/xhr.js" type="text/javascript"></script>
     <script src="js/jweixin-1.6.0.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -33,37 +32,62 @@
             nonceStr: btoa(Math.random()),
             timeStamp: new Date().getTime()
         };
-        xhr.request({
-            url: 'https://api.dscitech.com/api/wxJsSignature',
-            method: 'POST',
-            data: prepData,
-            headers: [{
-                key: 'Content-Type',
-                val: 'application/json'
-            }, {
-                key: 'Cache-Control',
-                val: 'no-cache'
-            }],
-            beforeSend: function () {
-                console.log('Loading data by network request.');
-            },
-            afterResponse: function (res) {
-                if (res.code !== 200) {
-                    alert('微信JSAPI后端异常 ' + res.msg + ' ' + res.data.errmsg + ' ' + res.data.errcode);
-                } else {
-                    // 开始注入微信JSAPI特性配置
-                    wx.config({
-                        debug: debugMode,
-                        appId: 'wx9d02b81c997dc938',
-                        timestamp: prepData.timeStamp,
-                        nonceStr: prepData.nonceStr,
-                        signature: res.data.js_sign,
-                        jsApiList: ["checkJsApi", "onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone", "hideMenuItems", "showMenuItems", "hideAllNonBaseMenuItem", "showAllNonBaseMenuItem", "translateVoice", "startRecord", "stopRecord", "onVoiceRecordEnd", "playVoice", "onVoicePlayEnd", "pauseVoice", "stopVoice", "uploadVoice", "downloadVoice", "chooseImage", "previewImage", "uploadImage", "downloadImage", "getNetworkType", "openLocation", "getLocation", "hideOptionMenu", "showOptionMenu", "closeWindow", "scanQRCode", "chooseWXPay", "openProductSpecificView", "addCard", "chooseCard", "openCard"],
-                        openTagList: ['wx-open-launch-weapp']
-                    });
-                }
+        document.onreadystatechange = function () {
+            if (document.readyState === 'complete') {
+                xhr.request({
+                    url: 'https://api.dscitech.com/api/wxJsSignature',
+                    method: 'POST',
+                    data: prepData,
+                    headers: [{
+                        key: 'Content-Type',
+                        val: 'application/json'
+                    }, {
+                        key: 'Cache-Control',
+                        val: 'no-cache'
+                    }],
+                    beforeSend: function () {
+                        console.log('Loading data by network request.');
+                        swal({
+                            title: '请稍候',
+                            text: '正在加载扫码组件',
+                            imageUrl: 'img/loading.gif',
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        })
+                    },
+                    afterResponse: function (res) {
+                        if (res.code !== 200) {
+                            swal({
+                                title: '未获得扫码权限',
+                                text: '微信JSAPI后端异常 ' + res.msg + ' ' + res.data.errmsg + ' ' + res.data.errcode,
+                                type: 'error',
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonText: '返回'
+                            }, function () {
+                                if (typeof(WeixinJSBridge) !== 'undefined') {
+                                    WeixinJSBridge.call("closeWindow");
+                                } else {
+                                    console.log('非微信内部浏览容器，跳过调用私有API');
+                                    window.close();
+                                }
+                            });
+                        } else {
+                            // 开始注入微信JSAPI特性配置
+                            wx.config({
+                                debug: debugMode,
+                                appId: 'wx9d02b81c997dc938',
+                                timestamp: prepData.timeStamp,
+                                nonceStr: prepData.nonceStr,
+                                signature: res.data.js_sign,
+                                jsApiList: ["checkJsApi", "onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone", "hideMenuItems", "showMenuItems", "hideAllNonBaseMenuItem", "showAllNonBaseMenuItem", "translateVoice", "startRecord", "stopRecord", "onVoiceRecordEnd", "playVoice", "onVoicePlayEnd", "pauseVoice", "stopVoice", "uploadVoice", "downloadVoice", "chooseImage", "previewImage", "uploadImage", "downloadImage", "getNetworkType", "openLocation", "getLocation", "hideOptionMenu", "showOptionMenu", "closeWindow", "scanQRCode", "chooseWXPay", "openProductSpecificView", "addCard", "chooseCard", "openCard"],
+                                openTagList: ['wx-open-launch-weapp']
+                            });
+                        }
+                    }
+                });
             }
-        });
+        }
         wx.ready(function () {
             wx.hideOptionMenu();
             wx.hideAllNonBaseMenuItem();
@@ -80,22 +104,61 @@
                         top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[1] + '&stationId=' + stationInfo[0]);
                     } else {
                         console.log(res.resultStr);
-                        alert('中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。');
+                        swal({
+                            title: '发现未适配码',
+                            text: '中间件暂未适配当前扫码内容，请访问开放平台查看对接信息。',
+                            type: 'warning',
+                            showCancelButton: false,
+                            showConfirmButton: true,
+                            confirmButtonText: '返回'
+                        }, function () {
+                            wx.closeWindow();
+                        });
                     }
                 },
                 fail: function (e) {
                     console.log(e);
-                    alert('扫码失败，请重试。');
-                    wx.closeWindow();
+                    swal({
+                        title: '扫码时出错',
+                        text: '扫码失败，请重试',
+                        type: 'error',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: '返回'
+                    }, function () {
+                        wx.closeWindow();
+                    });
                 },
                 cancel: function () {
-                    wx.closeWindow();
+                    swal({
+                        title: '扫码取消',
+                        text: '客户端已取消扫码',
+                        type: 'info',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: '返回'
+                    }, function () {
+                        wx.closeWindow();
+                    });
                 }
             });
         });
         wx.error(function () {
-            alert('微信JSAPI权限注入失败，暂无法调用客户端扫码能力。');
-            if (typeof(WeixinJSBridge) !== 'undefined') WeixinJSBridge.call("closeWindow");
+            swal({
+                title: '启动扫码时出错',
+                text: '微信JSAPI权限注入失败，暂无法调用客户端扫码能力。',
+                type: 'error',
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '返回'
+            }, function () {
+                if (typeof(WeixinJSBridge) !== 'undefined') {
+                    WeixinJSBridge.call("closeWindow");
+                } else {
+                    console.log('非微信内部浏览容器，跳过调用私有API');
+                    window.close();
+                }
+            });
         });
     </script>
 </body>
