@@ -39,9 +39,9 @@
         var DINGTALK_UA = 'taurusapp';
         document.onreadystatechange = function () {
             if (document.readyState === 'complete') {
-                if (navigator.userAgent.match(/MicroMessenger/i) === WECHAT_UA) {
+                if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) === WECHAT_UA) {
                     initWeChat();
-                } else if (navigator.userAgent.match(/DINGTALK_UA/i) === DINGTALK_UA) {
+                } else if (navigator.userAgent.toLowerCase().match(/DINGTALK_UA/i) === DINGTALK_UA) {
                     initDingTalk();
                 } else {
                     console.log(navigator.userAgent);
