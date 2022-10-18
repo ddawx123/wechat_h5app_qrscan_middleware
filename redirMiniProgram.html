@@ -53,7 +53,7 @@
                         console.log('Loading data by network request.');
                         swal({
                             title: '请稍候',
-                            text: '正在加载扫码组件',
+                            text: '正在等待授权',
                             imageUrl: 'img/loading.gif',
                             showCancelButton: false,
                             showConfirmButton: false
@@ -87,6 +87,7 @@
                                 jsApiList: ["checkJsApi", "onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone", "hideMenuItems", "showMenuItems", "hideAllNonBaseMenuItem", "showAllNonBaseMenuItem", "translateVoice", "startRecord", "stopRecord", "onVoiceRecordEnd", "playVoice", "onVoicePlayEnd", "pauseVoice", "stopVoice", "uploadVoice", "downloadVoice", "chooseImage", "previewImage", "uploadImage", "downloadImage", "getNetworkType", "openLocation", "getLocation", "hideOptionMenu", "showOptionMenu", "closeWindow", "scanQRCode", "chooseWXPay", "openProductSpecificView", "addCard", "chooseCard", "openCard"],
                                 openTagList: ['wx-open-launch-weapp']
                             });
+                            swal.close();
                         }
                     }
                 });
