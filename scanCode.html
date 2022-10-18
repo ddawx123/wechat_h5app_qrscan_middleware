@@ -186,7 +186,9 @@
                         });
                     },
                     onFail: function (e) {
-                        if (e.errorCode === 10) {
+                        // 处理iOS设备与Android设备错误码差异
+                        // iOS：-1，为字符串返回，Android：10，为整形返回，此处已作分类处理
+                        if (parseInt(e.errorCode) === 10 || parseInt(e.errorCode) === -1) {
                             swal({
                                 title: '扫码取消',
                                 text: '客户端已取消扫码',
