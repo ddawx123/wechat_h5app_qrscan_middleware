@@ -35,14 +35,24 @@
             nonceStr: btoa(Math.random()),
             timeStamp: new Date().getTime()
         };
-        var WECHAT_UA = 'micromessenger';
-        var DINGTALK_UA = 'taurusapp';
+        const WECHAT_UA = 'micromessenger';
+        const DINGTALK_UA = 'dingtalk';
+        const ALIPAY_UA = 'alipayclient';
         document.onreadystatechange = function () {
             if (document.readyState === 'complete') {
-                if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) === WECHAT_UA) {
+                if (navigator.userAgent.toLowerCase().indexOf(WECHAT_UA) !== -1) {
                     initWeChat();
-                } else if (navigator.userAgent.toLowerCase().match(/DINGTALK_UA/i) === DINGTALK_UA) {
+                } else if (navigator.userAgent.toLowerCase().indexOf(DINGTALK_UA) !== -1) {
                     initDingTalk();
+                } else if (navigator.userAgent.toLowerCase().indexOf(ALIPAY_UA) !== -1) {
+                    swal({
+                        title: '不支持的客户端',
+                        text: '检测到您正在支付宝内访问此应用，如需使用阿里系应用生态，请更换钉钉访问此应用！',
+                        type: 'error',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: '好'
+                    });
                 } else {
                     console.log(navigator.userAgent);
                     swal({
