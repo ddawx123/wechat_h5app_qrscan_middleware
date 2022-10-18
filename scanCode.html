@@ -43,6 +43,16 @@
                     initWeChat();
                 } else if (navigator.userAgent.match(/DINGTALK_UA/i) === DINGTALK_UA) {
                     initDingTalk();
+                } else {
+                    console.log(navigator.userAgent);
+                    swal({
+                        title: '不支持的客户端',
+                        text: '目前仅支持微信、钉钉内访问此应用！',
+                        type: 'error',
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: '好'
+                    });
                 }
             }
         }
