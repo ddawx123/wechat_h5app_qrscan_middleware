@@ -2,10 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>MiniProgram Launcher</title>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js" type="text/javascript"></script>
 </head>
 <body>
-
+    <wx-open-launch-weapp id="launch-btn" username="gh_d43f693ca31f" path="/page/component/index">
+        <template>
+            <button style="width: 200px; height: 45px; text-align: center; font-size: 17px; display: block; margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;">
+                打开小程序
+            </button>
+        </template>
+    </wx-open-launch-weapp>
+    <script src="js/sweetalert.min.js" type="text/javascript"></script>
+    <script src="js/xhr.js" type="text/javascript"></script>
+    <script src="js/jweixin-1.6.0.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        // 用于微信内置浏览器内自动屏蔽右上角所有扩展选项，防止用户通过微信直接转跳至系统浏览器查看平台网址
+        if (typeof(WeixinJSBridge) !== 'undefined') {
+            setTimeout(function() {
+                document.addEventListener("WeixinJSBridgeReady", function() {
+                    WeixinJSBridge.call("hideOptionMenu");
+                    WeixinJSBridge.call("hideAllNonBaseMenuItem");
+                }, false);
+                WeixinJSBridge.call("hideOptionMenu");
+                WeixinJSBridge.call("hideAllNonBaseMenuItem");
+            }, 300);
+        }
+    </script>
+    <script type="text/javascript">
+        let debugMode = false; // 仅调试环境使用，生产环境请务必调整为false
+        let prepData = {
+            requestUrl: window.location.href,
+            nonceStr: btoa(Math.random()),
+            timeStamp: new Date().getTime()
+        };
+        document.onreadystatechange = function () {
+            if (document.readyState === 'complete') {
+                xhr.request({
+                    url: 'https://api.dscitech.com/api/wxJsSignature',
+                    method: 'POST',
+                    data: prepData,
+                    headers: [{
+                        key: 'Content-Type',
+                        val: 'application/json'
+                    }, {
+                        key: 'Cache-Control',
+                        val: 'no-cache'
+                    }],
+                    beforeSend: function () {
+                        console.log('Loading data by network request.');
+                        swal({
+                            title: '请稍候',
+                            text: '正在加载扫码组件',
+                            imageUrl: 'img/loading.gif',
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        })
+                    },
+                    afterResponse: function (res) {
+                        if (res.code !== 200) {
+                            swal({
+                                title: '未获得HybridApp权限',
+                                text: '微信JSAPI后端异常 ' + res.msg + ' ' + res.data.errmsg + ' ' + res.data.errcode,
+                                type: 'error',
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonText: '返回'
+                            }, function () {
+                                if (typeof(WeixinJSBridge) !== 'undefined') {
+                                    WeixinJSBridge.call("closeWindow");
+                                } else {
+                                    console.log('非微信内部浏览容器，跳过调用私有API');
+                                    window.close();
+                                }
+                            });
+                        } else {
+                            // 开始注入微信JSAPI特性配置
+                            wx.config({
+                                debug: debugMode,
+                                appId: 'wx9d02b81c997dc938',
+                                timestamp: prepData.timeStamp,
+                                nonceStr: prepData.nonceStr,
+                                signature: res.data.js_sign,
+                                jsApiList: ["checkJsApi", "onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareWeibo", "onMenuShareQZone", "hideMenuItems", "showMenuItems", "hideAllNonBaseMenuItem", "showAllNonBaseMenuItem", "translateVoice", "startRecord", "stopRecord", "onVoiceRecordEnd", "playVoice", "onVoicePlayEnd", "pauseVoice", "stopVoice", "uploadVoice", "downloadVoice", "chooseImage", "previewImage", "uploadImage", "downloadImage", "getNetworkType", "openLocation", "getLocation", "hideOptionMenu", "showOptionMenu", "closeWindow", "scanQRCode", "chooseWXPay", "openProductSpecificView", "addCard", "chooseCard", "openCard"],
+                                openTagList: ['wx-open-launch-weapp']
+                            });
+                        }
+                    }
+                });
+            }
+        }
+        wx.ready(function () {
+            wx.hideOptionMenu();
+            wx.hideAllNonBaseMenuItem();
+        });
+        wx.error(function () {
+            swal({
+                title: '运行环境异常',
+                text: '微信JSAPI权限注入失败，暂无法调用客户端小程序跳转能力。',
+                type: 'error',
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '返回'
+            }, function () {
+                if (typeof(WeixinJSBridge) !== 'undefined') {
+                    WeixinJSBridge.call("closeWindow");
+                } else {
+                    console.log('非微信内部浏览容器，跳过调用私有API');
+                    window.close();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
