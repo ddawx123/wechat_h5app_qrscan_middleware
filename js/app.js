@@ -119,6 +119,8 @@ function initWeChat() {
  */
 function initDingTalk() {
     dd.ready(function() {
+        dd.biz.navigation.setRight({ show: false, control: true });
+        dd.biz.navigation.setLeft({ text: "Back" });
         dd.biz.util.scan({
             type: "all",
             onSuccess: function (r) {

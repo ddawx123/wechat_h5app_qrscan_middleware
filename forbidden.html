@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>访问受限 - Access Denied</title>
+    <link href="css/sweetalert.min.css" rel="stylesheet" />
+</head>
+<body>
+<script src="js/eruda.min.js" type="text/javascript"></script>
+<script type="text/javascript">eruda.init();</script>
+<script src="js/sweetalert.min.js" type="text/javascript"></script>
+<script src="js/xhr.js" type="text/javascript"></script>
+<script src="js/jweixin-1.6.0.js" type="text/javascript"></script>
+<script type="text/javascript">
+    // 用于微信内置浏览器内自动屏蔽右上角所有扩展选项，防止用户通过微信直接转跳至系统浏览器查看平台网址
+    if (typeof(WeixinJSBridge) !== 'undefined') {
+        setTimeout(function() {
+            document.addEventListener("WeixinJSBridgeReady", function() {
+                WeixinJSBridge.call("hideOptionMenu");
+                WeixinJSBridge.call("hideAllNonBaseMenuItem");
+            }, false);
+            WeixinJSBridge.call("hideOptionMenu");
+            WeixinJSBridge.call("hideAllNonBaseMenuItem");
+        }, 300);
+    }
+    document.onreadystatechange = function () {
+        if (document.readyState === 'complete') {
+            swal({
+                title: '不支持的客户端',
+                text: '目前仅支持移动端微信、钉钉内访问此应用！',
+                type: 'error',
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '好'
+            }, function () {
+                window.close();
+            });
+        }
+    }
+</script>
+</body>
+</html>
