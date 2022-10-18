@@ -182,21 +182,33 @@
                     type: "all",
                     onSuccess: function (r) {
                         procScanResult(r.text, function () {
-                            dd.biz.navigator.close();
+                            dd.biz.navigation.close();
                         });
                     },
                     onFail: function (e) {
-                        swal({
-                            title: '扫码取消',
-                            text: '客户端已取消扫码',
-                            type: 'info',
-                            showCancelButton: false,
-                            showConfirmButton: true,
-                            confirmButtonText: '返回'
-                        }, function () {
-                            console.log(e);
-                            // dd.biz.navigation.close();
-                        });
+                        if (e.errorCode === 10) {
+                            swal({
+                                title: '扫码取消',
+                                text: '客户端已取消扫码',
+                                type: 'info',
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonText: '返回'
+                            }, function () {
+                                dd.biz.navigation.close();
+                            });
+                        } else {
+                            swal({
+                                title: '扫码异常',
+                                text: '扫码时出错，客户端返回的错误信息已附加至调试日志。',
+                                type: 'warning',
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonText: '返回'
+                            }, function () {
+                                console.log(e);
+                            });
+                        }
                     }
                 });
             });
