@@ -124,8 +124,9 @@
                                 needResult: 1,
                                 scanType: ['qrCode', 'barCode'],
                                 success: function (res) {
-                                    // 根据扫码类型转入对应地区服务
-                                    procScanResult(res.resultStr);
+                                    procScanResult(res.resultStr, function () {
+                                        wx.closeWindow();
+                                    });
                                 },
                                 fail: function (e) {
                                     console.log(e);
@@ -180,7 +181,9 @@
                 dd.biz.util.scan({
                     type: "all",
                     onSuccess: function (r) {
-                        procScanResult(r.text);
+                        procScanResult(r.text, function () {
+                            dd.biz.navigator.close();
+                        });
                     },
                     onFail: function (e) {
                         swal({
@@ -201,9 +204,10 @@
         /**
          * 处理扫码结果
          * @param result
+         * @param callback
          * @return mixed
          */
-        function procScanResult(result) {
+        function procScanResult(result, callback = {}) {
             if (result.indexOf('https://sxbuszp.com/station/') >= 0) { // 命中绍兴公交
                 let stationId = result.split('https://sxbuszp.com/station/')[1];
                 top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=330600&stationId=' + stationId);
@@ -220,7 +224,7 @@
                     showConfirmButton: true,
                     confirmButtonText: '返回'
                 }, function () {
-                    wx.closeWindow();
+                    callback();
                 });
             }
         }
