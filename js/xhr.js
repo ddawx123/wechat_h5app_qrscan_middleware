@@ -56,6 +56,7 @@ const xhr = {
                 xmlHttpRequest.setRequestHeader(header.key, header.val);
             });
         }
+        if (typeof(config.withCredentials) !== 'undefined') xmlHttpRequest.withCredentials = config.withCredentials;
         switch (typeof(data)) {
             case 'object':
                 data = JSON.stringify(data);

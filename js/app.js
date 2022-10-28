@@ -14,6 +14,7 @@ function initWeChat() {
             key: 'Cache-Control',
             val: 'no-cache'
         }],
+        withCredentials: true,
         beforeSend: function () {
             console.log('Loading data by network request.');
             swal({
