@@ -83,11 +83,16 @@ function initWeChat() {
                                 title: '扫码取消',
                                 text: '客户端已取消扫码',
                                 type: 'info',
-                                showCancelButton: false,
+                                showCancelButton: true,
                                 showConfirmButton: true,
-                                confirmButtonText: '返回'
-                            }, function () {
-                                wx.closeWindow();
+                                confirmButtonText: '重新扫码',
+                                cancelButtonText: '返回'
+                            }, function (e) {
+                                if (e) {
+                                    initWeChat();
+                                } else {
+                                    wx.closeWindow();
+                                }
                             });
                         }
                     });
