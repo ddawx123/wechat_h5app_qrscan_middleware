@@ -3,6 +3,19 @@
  * @return mixed
  */
 function initWeChat() {
+    if (navigator.userAgent.toLowerCase().indexOf(WECHAT_UA) === -1) {
+        swal({
+            title: '不支持的客户端',
+            text: '目前仅支持移动端微信、钉钉内访问此应用！',
+            type: 'error',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: '好'
+        }, function () {
+            window.close();
+        });
+        return;
+    }
     xhr.request({
         url: 'https://api.dscitech.com/api/wxJsSignature',
         method: 'POST',
@@ -124,6 +137,19 @@ function initWeChat() {
  * @return mixed
  */
 function initDingTalk() {
+    if (dd.env.platform === 'notInDingTalk') {
+        swal({
+            title: '不支持的客户端',
+            text: '目前仅支持移动端微信、钉钉内访问此应用！',
+            type: 'error',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: '好'
+        }, function () {
+            window.close();
+        });
+        return;
+    }
     dd.ready(function() {
         dd.biz.navigation.setRight({ show: false, control: true });
         dd.biz.navigation.setLeft({ text: "Back" });
