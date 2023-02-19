@@ -203,6 +203,34 @@ function procScanResult(result, callback = {}) {
     } else if (result.indexOf('https://appactive.ibuscloud.com/') >= 0) { // 命中杭州公交
         let stationInfo = result.split('cn=')[1].split('&c=');
         top.location.replace('http://city.dscitech.com/#/bus/detail?regionId=' + stationInfo[1] + '&stationId=' + stationInfo[0]);
+    } else if (result.indexOf('https://api.dscitech.com/api/v2/iot/OneThingOneCode') >= 0) { // 命中一物一码
+        let codeData = {
+            unionCodeId: result.split('unionCodeId=')[1].split('&codeScene=')[0],
+            businessCode: result.split('businessCode=')[1]
+        };
+        console.log(codeData);
+        swal({
+            title: '访问限制',
+            text: '一物一码服务暂未开放，敬请期待！',
+            type: 'error',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: '返回'
+        }, function () {
+            callback();
+        });
+    } else if (result.indexOf('alipays://') >= 0 || result.indexOf('https://qr.alipay.com/') >= 0) {
+        console.log(result);
+        swal({
+            title: '温馨提示',
+            text: '您可能扫描了支付宝专用码，目前此工具限制所有Alipay-Schema类型的业务请求！请前往阿里系平台（钉钉以及浙大钉、浙政钉等专有钉钉除外）扫码进入。',
+            type: 'error',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: '返回'
+        }, function () {
+            callback();
+        });
     } else {
         console.log(result);
         swal({
