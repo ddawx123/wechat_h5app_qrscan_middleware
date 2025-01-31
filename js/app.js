@@ -39,10 +39,10 @@ function initWeChat() {
             })
         },
         afterResponse: function (res) {
-            if (res.code !== 200) {
+            if (typeof(res.code) === 'undefined' || res.code !== 200) {
                 swal({
                     title: '未获得扫码权限',
-                    text: '微信JSAPI后端异常 ' + res.msg + ' ' + res.data.errmsg + ' ' + res.data.errcode,
+                    text: '微信JSAPI后端异常\r\n' + res.msg,
                     type: 'error',
                     showCancelButton: false,
                     showConfirmButton: true,
@@ -82,7 +82,7 @@ function initWeChat() {
                             console.log(e);
                             swal({
                                 title: '扫码时出错',
-                                text: '扫码失败，请重试',
+                                text: '扫码失败，请重试\r\n' + e.errMsg,
                                 type: 'error',
                                 showCancelButton: false,
                                 showConfirmButton: true,
